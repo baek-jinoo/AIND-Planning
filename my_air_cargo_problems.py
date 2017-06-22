@@ -128,8 +128,7 @@ class AirCargoProblem(Problem):
             e.g. 'FTTTFF'
         :return: list of Action objects
         """
-        kb = PropKB()
-        kb.tell(decode_state(state, self.state_map).sentence())
+        kb = self.loadedKB(state)
         possible_actions = []
         for action in self.actions_list:
             if action.check_precond(kb, action.args):
@@ -146,12 +145,21 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        # TODO DRY
-        kb = PropKB()
-        kb.tell(decode_state(state, self.state_map).sentence())
+        kb = self.loadedKB(state)
         action(kb, action.args)
         new_state = FluentState(kb.clauses, [])
         return encode_state(new_state, self.state_map)
+
+    def loadedKB(self, state: str):
+        """ Return the knowledge base loaded
+        with state and state_map
+
+        :param state: state entering node
+        :return: knowledge base with state loaded
+        """
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).sentence())
+        return kb
 
     def goal_test(self, state: str) -> bool:
         """ Test the state to see if goal is reached
