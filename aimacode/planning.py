@@ -29,6 +29,9 @@ class Action:
     def __call__(self, kb, args):
         return self.act(kb, args)
 
+    def __repr__(self):
+        return '<Action: %(name)s%(args)s + %(precond_pos)s - %(precond_neg)s ==> + %(effect_add)s - %(effect_rem)s>\n' % self.__dict__
+
     def __str__(self):
         return "{}{!s}".format(self.name, self.args)
 
