@@ -150,6 +150,17 @@ class AirCargoProblem(Problem):
         new_state = FluentState(kb.clauses, [])
         return encode_state(new_state, self.state_map)
 
+    def loadedPositiveKB(self, state: str):
+        """ Return the knowledge base loaded
+        with state and state_map with only positive clauses
+
+        :param state: state entering node
+        :return: knowledge base with state loaded
+        """
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).pos_sentence())
+        return kb
+
     def loadedKB(self, state: str):
         """ Return the knowledge base loaded
         with state and state_map
@@ -198,8 +209,33 @@ class AirCargoProblem(Problem):
         conditions by ignoring the preconditions required for an action to be
         executed.
         """
-        # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
+        # check if clauses match goal state
+        kbPos = self.loadedPositiveKB(node.state)
+        reachedGoal = True
+        for clause in self.goal:
+            if clause not in kbPos.clauses:
+                reachedGoal = False
+
+        if reachedGoal:
+            return 0
+
+        # if not get actions_list and find an action that will get node.state
+        # closer to goal
+        kb = self.loadedKB(node.state)
+        goalSet = set(self.goal)
         count = 0
+        while len(goalSet) > 0:
+            for action in self.actions_list:
+                action = action.deepcopyWithoutPrecond()
+                tempKb = kb.deepcopy()
+                action(tempKb, action.args)
+
+                remainingGoals = goalSet - set(tempKb.clauses)
+                if len(goalSet) > len(remainingGoals):
+                    count += 1
+                    goalSet = remainingGoals
+                    kb = tempKb
+                    break
         return count
 
 

@@ -80,6 +80,11 @@ class PropKB(KB):
         if sentence:
             self.tell(sentence)
 
+    def deepcopy(self):
+        newPropKB = PropKB()
+        newPropKB.clauses = self.clauses.copy()
+        return newPropKB
+
     def tell(self, sentence):
         "Add the sentence's clauses to the KB."
         self.clauses.extend(conjuncts(to_cnf(sentence)))

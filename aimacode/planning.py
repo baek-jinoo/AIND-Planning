@@ -1,7 +1,8 @@
 """Planning (Chapters 10-11)
 """
 
-from .utils import Expr
+from .utils import ( Expr, expr)
+import copy
 
 
 class Action:
@@ -28,6 +29,12 @@ class Action:
 
     def __call__(self, kb, args):
         return self.act(kb, args)
+
+    def deepcopyWithoutPrecond(self):
+        newAction = Action(expr("At(A, B)"), [[],[]], [self.effect_add, self.effect_rem])
+        newAction.name = copy.deepcopy(self.name)
+        newAction.args = copy.deepcopy(self.args)
+        return newAction
 
     def __repr__(self):
         return '<Action: %(name)s%(args)s + %(precond_pos)s - %(precond_neg)s ==> + %(effect_add)s - %(effect_rem)s>\n' % self.__dict__
