@@ -3,6 +3,7 @@ from aimacode.search import Problem
 from aimacode.utils import expr
 from lp_utils import decode_state
 from aimacode.logic import PropKB
+import copy
 
 
 class PgNode():
@@ -312,27 +313,24 @@ class PlanningGraph():
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
 
+        
         if len(self.s_levels) <= level:
             return
 
-        state_map = []
-        state = ""
-        for pgNodeS in self.s_levels[level]:
-            state_map.append(pgNodeS.symbol)
-            if pgNodeS.is_pos:
-                state += "T"
-            else:
-                state += "F"
-
-        kb = PropKB()
-        kb.tell(decode_state(state, state_map).sentence())
-
         pgNodeAs = set()
         for action in self.all_actions:
-            print(action.args)
-            if action.check_precond(kb, action.args):
-                pgNodeAs.add(PgNode_a(action))
+            copyPgNodeS = self.s_levels[level].copy()
+            currentPgNodeA = PgNode_a(action)
+            currentPrecondSNodes = currentPgNodeA.prenodes
 
+            if currentPrecondSNodes.issubset(copyPgNodeS):
+                pgNodeAs.add(currentPgNodeA)
+
+                notParentNodeS = copyPgNodeS - currentPrecondSNodes
+                copyPgNodeS -= notParentNodeS
+                for nodeS in copyPgNodeS:
+                    currentPgNodeA.parents.add(nodeS)
+                    nodeS.children.add(currentPgNodeA)
         self.a_levels.append(pgNodeAs)
 
     def add_literal_level(self, level):
@@ -352,6 +350,17 @@ class PlanningGraph():
         #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
+
+        pgNodeSs = set()
+        for currentPgNodeA in self.a_levels[level - 1]:
+            effnodes = currentPgNodeA.effnodes
+            for effnode in effnodes:
+                pgNodeSs.add(effnode)
+
+                effnode.parents.add(currentPgNodeA)
+                currentPgNodeA.children.add(effnode)
+
+        self.s_levels.append(pgNodeSs)
 
     def update_a_mutex(self, nodeset):
         """ Determine and update sibling mutual exclusion for A-level nodes
