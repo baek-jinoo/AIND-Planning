@@ -319,18 +319,18 @@ class PlanningGraph():
 
         pgNodeAs = set()
         for action in self.all_actions:
-            copyPgNodeS = self.s_levels[level].copy()
-            currentPgNodeA = PgNode_a(action)
-            currentPrecondSNodes = currentPgNodeA.prenodes
+            copy_pg_node_s = self.s_levels[level].copy()
+            current_pg_node_a = PgNode_a(action)
+            current_precond_s_nodes = current_pg_node_a.prenodes
 
-            if currentPrecondSNodes.issubset(copyPgNodeS):
-                pgNodeAs.add(currentPgNodeA)
+            if current_precond_s_nodes.issubset(copy_pg_node_s):
+                pgNodeAs.add(current_pg_node_a)
 
-                notParentNodeS = copyPgNodeS - currentPrecondSNodes
-                copyPgNodeS -= notParentNodeS
-                for nodeS in copyPgNodeS:
-                    currentPgNodeA.parents.add(nodeS)
-                    nodeS.children.add(currentPgNodeA)
+                not_parent_node_s = copy_pg_node_s - current_precond_s_nodes
+                copy_pg_node_s -= not_parent_node_s
+                for nodeS in copy_pg_node_s:
+                    current_pg_node_a.parents.add(nodeS)
+                    nodeS.children.add(current_pg_node_a)
         self.a_levels.append(pgNodeAs)
 
     def add_literal_level(self, level):
@@ -351,16 +351,16 @@ class PlanningGraph():
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
 
-        pgNodeSs = set()
-        for currentPgNodeA in self.a_levels[level - 1]:
-            effnodes = currentPgNodeA.effnodes
+        pg_node_ses = set()
+        for current_pg_node_a in self.a_levels[level - 1]:
+            effnodes = current_pg_node_a.effnodes
             for effnode in effnodes:
-                pgNodeSs.add(effnode)
+                pg_node_ses.add(effnode)
 
-                effnode.parents.add(currentPgNodeA)
-                currentPgNodeA.children.add(effnode)
+                effnode.parents.add(current_pg_node_a)
+                current_pg_node_a.children.add(effnode)
 
-        self.s_levels.append(pgNodeSs)
+        self.s_levels.append(pg_node_ses)
 
     def update_a_mutex(self, nodeset):
         """ Determine and update sibling mutual exclusion for A-level nodes
