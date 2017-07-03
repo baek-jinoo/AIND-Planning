@@ -30,7 +30,7 @@ class Action:
     def __call__(self, kb, args):
         return self.act(kb, args)
 
-    def deepcopyWithoutPrecond(self):
+    def deepcopy_without_precond(self):
         newAction = Action(expr("At(A, B)"), [[],[]], [self.effect_add, self.effect_rem])
         newAction.name = copy.deepcopy(self.name)
         newAction.args = copy.deepcopy(self.args)

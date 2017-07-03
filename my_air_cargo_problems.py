@@ -128,7 +128,7 @@ class AirCargoProblem(Problem):
             e.g. 'FTTTFF'
         :return: list of Action objects
         """
-        kb = self.loadedKB(state)
+        kb = self.loaded_kb(state)
         possible_actions = []
         for action in self.actions_list:
             if action.check_precond(kb, action.args):
@@ -145,12 +145,12 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        kb = self.loadedKB(state)
+        kb = self.loaded_kb(state)
         action(kb, action.args)
         new_state = FluentState(kb.clauses, [])
         return encode_state(new_state, self.state_map)
 
-    def loadedPositiveKB(self, state: str):
+    def loaded_positive_kb(self, state: str):
         """ Return the knowledge base loaded
         with state and state_map with only positive clauses
 
@@ -161,7 +161,7 @@ class AirCargoProblem(Problem):
         kb.tell(decode_state(state, self.state_map).pos_sentence())
         return kb
 
-    def loadedKB(self, state: str):
+    def loaded_kb(self, state: str):
         """ Return the knowledge base loaded
         with state and state_map
 
@@ -210,31 +210,31 @@ class AirCargoProblem(Problem):
         executed.
         """
         # check if clauses match goal state
-        kbPos = self.loadedPositiveKB(node.state)
-        reachedGoal = True
+        kb_pos = self.loaded_positive_kb(node.state)
+        reached_gaol = True
         for clause in self.goal:
-            if clause not in kbPos.clauses:
-                reachedGoal = False
+            if clause not in kb_pos.clauses:
+                reached_gaol = False
 
-        if reachedGoal:
+        if reached_gaol:
             return 0
 
         # if not get actions_list and find an action that will get node.state
         # closer to goal
-        kb = self.loadedKB(node.state)
-        goalSet = set(self.goal)
+        kb = self.loaded_kb(node.state)
+        goal_set = set(self.goal)
         count = 0
-        while len(goalSet) > 0:
+        while len(goal_set) > 0:
             for action in self.actions_list:
-                action = action.deepcopyWithoutPrecond()
-                tempKb = kb.deepcopy()
-                action(tempKb, action.args)
+                action = action.deepcopy_without_precond()
+                temp_kb = kb.deepcopy()
+                action(temp_kb, action.args)
 
-                remainingGoals = goalSet - set(tempKb.clauses)
-                if len(goalSet) > len(remainingGoals):
+                remaining_goals = goal_set - set(temp_kb.clauses)
+                if len(goal_set) > len(remaining_goals):
                     count += 1
-                    goalSet = remainingGoals
-                    kb = tempKb
+                    goal_set = remaining_goals
+                    kb = temp_kb
                     break
         return count
 
