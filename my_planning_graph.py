@@ -409,11 +409,6 @@ class PlanningGraph():
         Test a pair of actions for inconsistent effects, returning True if
         one action negates an effect of the other, and False otherwise.
 
-        HINT: The Action instance associated with an action node is accessible
-        through the PgNode_a.action attribute. See the Action class
-        documentation for details on accessing the effects and preconditions of
-        an action.
-
         :param node_a1: PgNode_a
         :param node_a2: PgNode_a
         :return: bool
@@ -436,16 +431,29 @@ class PlanningGraph():
         Test a pair of actions for mutual exclusion, returning True if the 
         effect of one action is the negation of a precondition of the other.
 
-        HINT: The Action instance associated with an action node is accessible
-        through the PgNode_a.action attribute. See the Action class
-        documentation for details on accessing the effects and preconditions of
-        an action.
-
         :param node_a1: PgNode_a
         :param node_a2: PgNode_a
         :return: bool
         """
-        # TODO test for Interference between nodes
+        action1 = node_a1.action
+        action2 = node_a2.action
+
+        for precond in action1.precond_pos:
+            if precond in action2.effect_rem:
+                return True
+
+        for precond in action2.precond_pos:
+            if precond in action1.effect_rem:
+                return True
+
+        for precond in action1.precond_neg:
+            if precond in action2.effect_add:
+                return True
+
+        for precond in action2.precond_neg:
+            if precond in action1.effect_add:
+                return True
+        
         return False
 
     def competing_needs_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
