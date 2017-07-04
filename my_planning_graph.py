@@ -317,21 +317,21 @@ class PlanningGraph():
         if len(self.s_levels) <= level:
             return
 
-        pgNodeAs = set()
+        pg_node_a_s = set()
         for action in self.all_actions:
             copy_pg_node_s = self.s_levels[level].copy()
             current_pg_node_a = PgNode_a(action)
             current_precond_s_nodes = current_pg_node_a.prenodes
 
             if current_precond_s_nodes.issubset(copy_pg_node_s):
-                pgNodeAs.add(current_pg_node_a)
+                pg_node_a_s.add(current_pg_node_a)
 
                 not_parent_node_s = copy_pg_node_s - current_precond_s_nodes
                 copy_pg_node_s -= not_parent_node_s
                 for nodeS in copy_pg_node_s:
                     current_pg_node_a.parents.add(nodeS)
                     nodeS.children.add(current_pg_node_a)
-        self.a_levels.append(pgNodeAs)
+        self.a_levels.append(pg_node_a_s)
 
     def add_literal_level(self, level):
         """ add an S (literal) level to the Planning Graph
@@ -418,7 +418,17 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        # TODO test for Inconsistent Effects between nodes
+        action1 = node_a1.action
+        action2 = node_a2.action
+
+        for effect_add in action1.effect_add:
+            if effect_add in action2.effect_rem:
+                return True
+
+        for effect_rem in action1.effect_rem:
+            if effect_rem in action2.effect_add:
+                return True
+
         return False
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
@@ -448,8 +458,17 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
+        prenodes1 = node_a1.parents
+        prenodes2 = node_a2.parents
 
-        # TODO test for Competing Needs between nodes
+        for prenode1 in prenodes1:
+            for prenode2 in prenodes2:
+                if prenode1 == prenode2:
+                    continue
+                if prenode1 in prenode2.mutex:
+                    return True
+                if prenode2 in prenode1.mutex:
+                    return True
         return False
 
     def update_s_mutex(self, nodeset: set):
