@@ -466,16 +466,16 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        prenodes1 = node_a1.parents
-        prenodes2 = node_a2.parents
+        node1_parents = node_a1.parents
+        node2_parents = node_a2.parents
 
-        for prenode1 in prenodes1:
-            for prenode2 in prenodes2:
-                if prenode1 == prenode2:
+        for node1_parent in node1_parents:
+            for node2_parent in node2_parents:
+                if node1_parent == node2_parent:
                     continue
-                if prenode1 in prenode2.mutex:
+                if node1_parent in node2_parent.mutex:
                     return True
-                if prenode2 in prenode1.mutex:
+                if node2_parent in node1_parent.mutex:
                     return True
         return False
 
@@ -524,15 +524,19 @@ class PlanningGraph():
         are pairwise mutually exclusive with all of the actions that could
         achieve the second literal node.
 
-        HINT: The PgNode.is_mutex method can be used to test whether two nodes
-        are mutually exclusive.
-
         :param node_s1: PgNode_s
         :param node_s2: PgNode_s
         :return: bool
         """
-        # TODO test for Inconsistent Support between nodes
-        return False
+        if len(node_s1.parents) == 0 or len(node_s2.parents) == 0:
+            return False
+
+        for node1_parent in node_s1.parents:
+            for node2_parent in node_s2.parents:
+                if not node1_parent.is_mutex(node2_parent):
+                    return False
+
+        return True
 
     def h_levelsum(self) -> int:
         """The sum of the level costs of the individual goals (admissible if goals independent)
