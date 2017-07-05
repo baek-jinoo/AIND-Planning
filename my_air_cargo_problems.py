@@ -3,7 +3,7 @@ from aimacode.planning import Action
 from aimacode.search import (
     Node, Problem,
 )
-from aimacode.utils import expr
+from aimacode.utils import (expr, Expr)
 from lp_utils import (
     FluentState, encode_state, decode_state,
 )
@@ -226,8 +226,12 @@ class AirCargoProblem(Problem):
         count = 0
         while len(goal_set) > 0:
             for action in self.actions_list:
-                action = action.deepcopy_without_precond()
-                temp_kb = kb.deepcopy()
+                args = action.args
+                new_expr = Expr(action.name, *args)
+                new_action = Action(new_expr, [[], []], [action.effect_add, action.effect_rem])
+                action = new_action
+                temp_kb = PropKB()
+                temp_kb.clauses = kb.clauses.copy()
                 action(temp_kb, action.args)
 
                 remaining_goals = goal_set - set(temp_kb.clauses)
