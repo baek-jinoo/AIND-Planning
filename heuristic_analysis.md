@@ -81,43 +81,59 @@ Unload(C2, P2, SFO)
 Unload(C4, P2, SFO)
 ```
 
+
+
 ### Compare and contrast non-heuristic search result metrics (optimality, time elapsed, number of node expansions) for Problems 1,2, and 3. 
 
 ```Note: Include breadth-first, depth-first, and at least one other uninformed non-heuristic search in your comparison; Your third choice of non-heuristic search may be skipped for Problem 3 if it takes longer than 10 minutes to run, but a note in this case should be included.```
 
-Breadth first search takes a considerably longer time when compared to depth first search. The growth in search time in terms of problem complexity seems to be non-linear, but larger, with regards to the number of entities involved in the domain of the problem. However, it seems to find the most optimal solution in our test runs when compared to other non-heuristic, heuristic search and Graphplan algorithms.
+Breadth first search (BFS) takes a considerably longer time when compared to depth first search (DFS). The growth in search time in terms of problem complexity seems to be non-linear, but larger, with regards to the number of entities involved in the state space of the problem. However, it seems to find the most optimal solution in our test runs when compared to other non-heuristic, heuristic and Graphplan based heuristic search.
 
-Depth first search finds solutions very quickly and while exploring a minimal amount of nodes when compared to other search methods. However, their solution is suboptimal. In some cases, the solution's plan length is orders of magnitude larger than the solutions found by breadth first search.
+Depth first search (DFS) finds solutions very quickly while exploring a minimal amount of nodes when compared to other search methods. However, the solutions found with DFS is suboptimal. In some cases, the solution's plan length is orders of magnitude larger than the solutions found by BFS.
 
-Depth limited search seems to have issues finding the solution as the domain increases with regards to the entities involved. In this case, the number of cargo and airports increasing.
+Depth limited search seems to have issues finding the solution as the state space increases with regards to the entities involved. In this case, the entites, cargoes and airports, increased in number.
 
-Breadth first tree search could not find solutions for problems 2 and 3 within 14 minutes for problem 2 and 21 minutes for problem 3. It appears as the optimization of graph search over tree search makes dramatic improvements in performance to find solutions.
+Breadth first tree search could not find solutions for problems 2 and 3 within 14 minutes for problem 2 and 21 minutes for problem 3. It appears that the optimization that graph search provides over tree search makes dramatic improvements in performance to find solutions in state space search in Planning systems.
 
-Uniform cost search seems to find the optimal solution, but takes longer and explores more state space when compared to breadth first search. One of the differences in performance is due to the calculation to find the shortest path in uniform cost vs. breadth first search. Lastly, breath first search ends earlier with less node expansions due to the implementation detail where it evaluates the goal state upon expansion, but not on pop from the queue or data structure.
+Uniform cost search (UCS) seems to find the optimal solution, but takes longer and explores more state space when compared to BFS. One of the differences in performance is due to the requirement to calculate to find the shortest path in uniform cost vs. breadth first search. Lastly, BFS ends earlier with less node expansions due to the implementation detail where it evaluates the goal state upon expansion, but not on pop from the queue or data structure.
+
+
 
 ### Compare and contrast heuristic search result metrics using A* with the "ignore preconditions" and "level-sum" heuristics for Problems 1, 2, and 3.
 
-Both ignore preconditions and level sum heuristics take less time to compute as the domain becomes more complex when compared to complete non-heuristic search methods such as breadth first search (BFS) as shown on Chart 1 below. 
+Both ignore preconditions and level sum heuristics take less time to compute as the state space grows when compared to complete non-heuristic search methods, such as BFS, as shown on Chart 1 below.
 
 ![chart_01](./chart_01.png)
 
 ##### Chart 1 - Time elapsed normalized by each problem's breadth first search time
 
-This reduction in elapsed time can probably be mainly be attributed to the fact that ignore preconditions and level sum expands less nodes compared to non-heuristic functions such as BFS, as shown on Chart 2. The chart indicates that as the problem becomes more complex, the number of new nodes explored dramatically decreases when using these heuristic functions. When comparing no preconditions to level sum heuristic function, you notice that the level sum with Planning Graph performs much better in terms of new nodes explored. But, as you can see in Chart 3, the time that it takes to find the next new node takes a longer time with these heuristic functions.
+
+
+This reduction in elapsed time can probably be mainly attributed to the fact that ignore preconditions and level sum expands less nodes compared to non-heuristic functions such as BFS, as shown on Chart 2. The chart indicates that as the problem becomes more complex, the number of new nodes explored dramatically decreases when using these heuristic functions. When comparing no preconditions to level sum heuristic function, you notice that the level sum with Planning Graph performs much better in terms of new nodes explored. But, as you can see in Chart 3, the time that it takes to find the next new node takes a longer time with these heuristic functions.
+
+
 
 ![chart_01](./chart_02.png)
 
 ##### Chart 2: Ratio of new nodes to solution plan length normalized over breadth first search for each problem
 
+
+
 ![chart_03](./chart_03.png)
 
 ##### Chart 3: Ratio of time elapsed per new node expansion normalized over breadth first search for each problem
 
-Overall, as problem becomes more complex, the heuristic function helps expand less nodes in less time in total. Basically, as the state space increases, the direction provided by the heuristic function really helps the search function find the solution faster.
+
+
+Overall, as the problem becomes complex, the heuristic function helps by expanding less nodes in less time in total. Basically, as the state space increases, the directionality towards the solution provided by the heuristic functions helps the search function find the solution faster.
+
+
 
 ### What was the best heuristic used in these problems? Was it better than non-heuristic search planning methods for all problems? Why or why not?
 
-The best heuristic in terms of nodes expanded was h_pg_levelsum heuristic using Planning Graph. However, it does not always find the most optimal solution, but a good solution. The h_ignore_preconditions heuristic did always find the optimal solution in our data set. However, as the complexity of the domain insceased, the time to run h_ignore_preconditions increased in a faster rate when compared to h_pg_levesum. If optimality of solution is not paramount, and the domain is complex, Planning Graph's level sum heuristic seems to be a great tool. If optimality is of utmost importance, h_ignore_preconditions, with its admissibility, could server well for the users when they can afford more time and space to find the solution.
+The best heuristic in terms of nodes expanded was level sum heuristic using Planning Graph. However, it does not always find the most optimal solution, but a good solution. The ignore preconditions heuristic did always find the optimal solution in our data set. However, as the complexity of the domain insceased, the time to run ignore preconditions increased in a faster rate when compared to level sum heuristic. If optimality of solution is not paramount, and the domain is complex, Planning Graph's level sum heuristic seems to be a great tool. If optimality is of utmost importance, ignore preconditions, with its admissibility, could server well for the users when they can afford more time and space to find the solution.
+
+
 
 ##### Table 1 - Results data table
 
