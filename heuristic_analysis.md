@@ -93,7 +93,7 @@ Depth first search (DFS) finds solutions very quickly while exploring a minimal 
 
 Depth limited search seems to have issues finding the solution as the state space increases with regards to the entities involved. In this case, the entites, cargoes and airports, increased in number.
 
-Breadth first tree search could not find solutions for problems 2 and 3 within 14 minutes for problem 2 and 21 minutes for problem 3. It appears that the optimization that graph search provides over tree search makes dramatic improvements in performance to find solutions in state space search in Planning systems.
+Breadth first tree search could not find solutions for problems 2 and 3 within 14 minutes for problem 2 and 21 minutes for problem 3. It appears that the optimization that graph search provides over tree search makes dramatic improvements in performance to find solutions in state space search in Planning systems. This might be especially exemplified due to the nature of planning system state space where repeating node patterns arise very frequently during traversal.
 
 Uniform cost search (UCS) seems to find the optimal solution, but takes longer and explores more state space when compared to BFS. One of the differences in performance is due to the requirement to calculate to find the shortest path in uniform cost vs. breadth first search. Lastly, BFS ends earlier with less node expansions due to the implementation detail where it evaluates the goal state upon expansion, but not on pop from the queue or data structure.
 
