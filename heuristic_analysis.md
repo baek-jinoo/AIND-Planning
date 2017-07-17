@@ -109,7 +109,7 @@ Both ignore preconditions and level sum heuristics take less time to compute as 
 
 
 
-This reduction in elapsed time can probably be mainly attributed to the fact that ignore preconditions and level sum expands less nodes compared to non-heuristic functions such as BFS, as shown on Chart 2. The chart indicates that as the problem becomes more complex, the number of new nodes explored dramatically decreases when using these heuristic functions. When comparing no preconditions to level sum heuristic function, you notice that the level sum with Planning Graph performs much better in terms of new nodes explored. But, as you can see in Chart 3, the time that it takes to find the next new node takes a longer time with these heuristic functions.
+This reduction in elapsed time can probably be mainly attributed to the fact that ignore preconditions and level sum expands less nodes compared to non-heuristic functions such as BFS, as shown on Chart 2. The chart indicates that as the problem becomes more complex, the number of new nodes explored dramatically decreases when using these heuristic functions. When comparing no preconditions to level sum heuristic function, you notice that the level sum with GraphPlan performs much better in terms of new nodes explored. But, as you can see in Chart 3, the time that it takes to find the next new node takes a longer time with these heuristic functions.
 
 
 
@@ -131,37 +131,41 @@ Overall, as the problem becomes complex, the heuristic function helps by expandi
 
 ### What was the best heuristic used in these problems? Was it better than non-heuristic search planning methods for all problems? Why or why not?
 
-The best heuristic in terms of nodes expanded was level sum heuristic using Planning Graph. However, it does not always find the most optimal solution, but a good solution. The ignore preconditions heuristic did always find the optimal solution in our data set. However, as the complexity of the domain insceased, the time to run ignore preconditions increased in a faster rate when compared to level sum heuristic. If optimality of solution is not paramount, and the domain is complex, Planning Graph's level sum heuristic seems to be a great tool. If optimality is of utmost importance, ignore preconditions, with its admissibility, could server well for the users when they can afford more time and space to find the solution.
+The best heuristic in terms of nodes expanded was level sum heuristic using GraphPlan. However, it does not always find the most optimal solution, but a good solution. This is because the GraphPlan's counting the level sum of the planning graph does not guarantee admissibility. Due to this, the A* algorithm does not always find the most optimal solution when following the level sum heuristic. The ignore preconditions heuristic did always find the optimal solution in our data set, and this is attributed to the fact that ignore precondition is an admissible heuristic. 
+
+However, as the complexity of the domain insceased, the time to run ignore preconditions increased in a faster rate when compared to level sum heuristic. This is mainly due to the fact that the heuristic derived from planning graph of GraphPlan found the solution much faster with increased problem state space. My guess is that the ignore preconditions seems to use less information when compared to the level sum heuristic when evaluating the heuristic. For example, the ignore preconditions utilizes blindly counts the number of actions left from current state to achieve the goals, while, level sum uses the level information on top of the number of actions to evaluate the heuristic.
+
+Overall, if optimality of solution is not paramount, and the domain is complex, GraphPlan's level sum heuristic seems to be a great tool. If optimality is of utmost importance, ignore preconditions, with its admissibility, could serve well for the users if they can afford more time and space to find the solution.
 
 
 
 ##### Table 1 - Results data table
 
-|       | expansions | goal tests | new nodes | plan length | heuristic |
-| ----- | ---------: | ---------: | --------: | ----------: | --------: |
-| p1s1* |         43 |         56 |       180 |           6 |         F |
-| p1s2  |      1,458 |      1,459 |     5,960 |           6 |         F |
-| p1s3  |         21 |         22 |        84 |          20 |         F |
-| p1s4  |        101 |        271 |       414 |          50 |         F |
-| p1s5  |         55 |         57 |       224 |           6 |         F |
-| p1s9  |         42 |         44 |       176 |           6 |         T |
-| p1s10 |         11 |         13 |        50 |           6 |         T |
-|       |            |            |           |             |           |
-| p2s1  |      3,343 |      4,609 |    30,509 |           9 |         F |
-| p2s2  |            |            |           |             |         F |
-| p2s3  |        624 |        625 |     5,602 |         619 |         F |
-| p2s4  |            |            |           |             |         F |
-| p2s5  |      4,853 |      4,855 |    44,041 |           9 |         F |
-| p2s9  |      2,232 |      2,234 |    20,406 |           9 |         T |
-| p2s10 |         86 |         88 |       841 |           9 |         T |
-|       |            |            |           |             |           |
-| p3s1  |     14,663 |     18,098 |   129,631 |          12 |         F |
-| p3s2  |            |            |           |             |         F |
-| p3s3  |        408 |        409 |     3,364 |         392 |         F |
-| p3s4  |            |            |           |             |         F |
-| p3s5  |     18,198 |     18,200 |   159,396 |          12 |         F |
-| p3s9  |      6,191 |      6,193 |    55,097 |          12 |         T |
-| p3s10 |        241 |        243 |     2,194 |          13 |         T |
+|       | expansions | goal tests | new nodes | plan length | time elapsed |
+| ----- | ---------: | ---------: | --------: | ----------: | -----------: |
+| p1s1* |         43 |         56 |       180 |           6 |        0.125 |
+| p1s2  |      1,458 |      1,459 |     5,960 |           6 |        4.078 |
+| p1s3  |         21 |         22 |        84 |          20 |        0.057 |
+| p1s4  |        101 |        271 |       414 |          50 |        0.301 |
+| p1s5  |         55 |         57 |       224 |           6 |        0.152 |
+| p1s9  |         42 |         44 |       176 |           6 |        0.196 |
+| p1s10 |         11 |         13 |        50 |           6 |        0.563 |
+|       |            |            |           |             |              |
+| p2s1  |      3,343 |      4,609 |    30,509 |           9 |       48.172 |
+| p2s2  |            |            |           |             |      timeout |
+| p2s3  |        624 |        625 |     5,602 |         619 |       10.030 |
+| p2s4  |            |            |           |             |      timeout |
+| p2s5  |      4,853 |      4,855 |    44,041 |           9 |       61.019 |
+| p2s9  |      2,232 |      2,234 |    20,406 |           9 |       52.245 |
+| p2s10 |         86 |         88 |       841 |           9 |       47.003 |
+|       |            |            |           |             |              |
+| p3s1  |     14,663 |     18,098 |   129,631 |          12 |      293.836 |
+| p3s2  |            |            |           |             |      timeout |
+| p3s3  |        408 |        409 |     3,364 |         392 |        6.419 |
+| p3s4  |            |            |           |             |      timeout |
+| p3s5  |     18,198 |     18,200 |   159,396 |          12 |      294.954 |
+| p3s9  |      6,191 |      6,193 |    55,097 |          12 |      391.087 |
+| p3s10 |        241 |        243 |     2,194 |          13 |      171.749 |
 
 \* The *Legend* below maps these to the the name of search and type of problem
 
